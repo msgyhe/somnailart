@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import ShineBorder from "@/components/main/hero/shine-border";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthContext";
 
 const HeroCanvas = dynamic(() => import("@/components/main/hero/canvas"), { ssr: false });
 
@@ -32,6 +33,13 @@ function GoogleSVG({ className }: { className?: string }) {
 export default function AuthPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { user, loading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace("/dashboard");
+    }
+  }, [user, authLoading, router]);
 
   const handleGoogleLogin = async () => {
     setLoading(true);

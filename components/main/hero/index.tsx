@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import ShineBorder from "./shine-border";
 import TypeWriter from "./type-writer";
+import { useAuth } from "@/context/AuthContext";
 
 const HeroCanvas = dynamic(() => import("./canvas"), { ssr: false });
 
@@ -106,6 +108,13 @@ function StatItem({ value, label }: { value: string; label: string }) {
 }
 
 export default function Hero() {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const handleStart = () => {
+    router.push(user ? "/dashboard" : "/auth");
+  };
+
   return (
     <section className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black">
       <HeroCanvas />
@@ -173,9 +182,12 @@ export default function Hero() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-4">
-          <button className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 hover:scale-105 active:scale-95">
+          <button
+            onClick={handleStart}
+            className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 hover:scale-105 active:scale-95"
+          >
             <WandSVG className="w-4 h-4" />
-            무료로 시작하기
+            {user ? "대시보드로 이동" : "무료로 시작하기"}
             <ArrowRightSVG className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
           </button>
           <button className="flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-8 py-3.5 text-sm font-semibold text-white/80 backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/30 active:scale-95">
