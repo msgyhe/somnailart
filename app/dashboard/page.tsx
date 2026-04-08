@@ -4,6 +4,13 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
+const NAV_HREF = {
+  "홈": "/dashboard",
+  "AI 생성": "/generate",
+  "내 썸네일": "/thumbnails",
+  "설정": "/settings",
+} as const;
+
 function SparklesSVG({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none">
@@ -193,19 +200,23 @@ export default function DashboardPage() {
 
         {/* Nav */}
         <nav className="flex flex-col gap-1 p-3 flex-1">
-          {NAV_ITEMS.map((item, i) => (
-            <button
-              key={item.label}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all ${
-                i === 0
-                  ? "bg-white/[0.07] text-white font-medium"
-                  : "text-white/40 hover:bg-white/[0.04] hover:text-white/70"
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </button>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const active = item.label === "홈";
+            return (
+              <button
+                key={item.label}
+                onClick={() => router.push(NAV_HREF[item.label as keyof typeof NAV_HREF])}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all ${
+                  active
+                    ? "bg-white/[0.07] text-white font-medium"
+                    : "text-white/40 hover:bg-white/[0.04] hover:text-white/70"
+                }`}
+              >
+                {item.icon}
+                {item.label}
+              </button>
+            );
+          })}
         </nav>
 
         {/* User profile */}
@@ -260,7 +271,10 @@ export default function DashboardPage() {
 
           {/* Quick action */}
           <div className="mb-6">
-            <button className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-dashed border-purple-500/30 bg-purple-500/[0.04] py-5 text-sm font-medium text-purple-400/80 transition-all hover:border-purple-500/50 hover:bg-purple-500/[0.08] hover:text-purple-400 active:scale-[0.99]">
+            <button
+              onClick={() => router.push("/generate")}
+              className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-dashed border-purple-500/30 bg-purple-500/[0.04] py-5 text-sm font-medium text-purple-400/80 transition-all hover:border-purple-500/50 hover:bg-purple-500/[0.08] hover:text-purple-400 active:scale-[0.99]"
+            >
               <PlusSVG className="w-5 h-5" />
               새 썸네일 생성하기
             </button>
@@ -277,19 +291,21 @@ export default function DashboardPage() {
               description="키워드만 입력하면 AI가 클릭률 높은 썸네일을 자동 생성합니다."
               accent="#a855f7"
               badge="NEW"
+              onClick={() => router.push("/generate")}
             />
             <TileCard
               icon={<ImageSVG className="w-5 h-5" />}
               title="내 썸네일"
               description="생성한 썸네일을 모아보고 다운로드하세요."
               accent="#6366f1"
+              onClick={() => router.push("/thumbnails")}
             />
             <TileCard
               icon={<SparklesSVG className="w-5 h-5" />}
               title="스타일 템플릿"
               description="다양한 유튜브 스타일 템플릿으로 빠르게 시작하세요."
               accent="#ec4899"
-              badge="SOON"
+              onClick={() => router.push("/templates")}
             />
             <TileCard
               icon={<SettingsSVG className="w-5 h-5" />}
